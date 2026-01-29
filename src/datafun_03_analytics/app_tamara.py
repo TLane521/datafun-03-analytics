@@ -45,7 +45,7 @@ from datafun_toolkit.logger import get_logger, log_header
 # === IMPORT LOCAL MODULE FUNCTIONS ===
 # REQ: imports from other modules in this project must use full package path
 # TODO: create and import your own data pipeline module here. See the example code.
-from datafun_03_analytics.tamara_csv_pipeline_csv_pipeline import run_csv_pipeline
+from datafun_03_analytics.tamara_csv_pipeline import run_csv_pipeline
 
 # === CONFIGURE LOGGER ONCE PER MODULE ===
 
