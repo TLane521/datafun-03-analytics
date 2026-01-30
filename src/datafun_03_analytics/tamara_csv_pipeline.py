@@ -179,17 +179,17 @@ def run_csv_pipeline(*, raw_dir: Path, processed_dir: Path, logger: Any) -> None
 
     with input_file.open("r", newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-    for row in reader:
-        region = (row.get("Regional indicator") or "").strip()
-        score = (row.get("Ladder score") or "").strip()
+        for row in reader:
+            region = (row.get("Regional indicator") or "").strip()
+            score = (row.get("Ladder score") or "").strip()
 
-        if not region or not score:
-            continue
+            if not region or not score:
+                continue
 
-        try:
-            region_totals[region].append(float(score))
-        except ValueError:
-            continue
+            try:
+                region_totals[region].append(float(score))
+            except ValueError:
+                continue
 
     avg_by_region: dict[str, float] = {
         region: sum(scores) / len(scores)
