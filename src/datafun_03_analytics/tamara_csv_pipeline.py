@@ -25,7 +25,7 @@ import csv
 from pathlib import Path
 import statistics
 from typing import Any
-
+from collections import defaultdict
 # === DEFINE ETL STEP FUNCTIONS ===
 # === We add a VERIFY step to check data integrity ===
 
@@ -115,7 +115,12 @@ def verify_stats(*, stats: dict[str, float]) -> None:
         raise ValueError("Min cannot be greater than max.")
 
 
-def load_stats_report(*, stats: dict[str, float], out_path: Path) -> None:
+def load_stats_report(
+        *,
+    stats: dict[str, float],
+    avg_by_region: dict[str, float],
+    out_path: Path
+) -> None:
     """L: Write stats to a text file in data/processed.
 
     Args:
@@ -134,7 +139,11 @@ def load_stats_report(*, stats: dict[str, float], out_path: Path) -> None:
         f.write(f"Maximum: {stats['max']:.2f}\n")
         f.write(f"Mean: {stats['mean']:.2f}\n")
         f.write(f"Standard Deviation: {stats['stdev']:.2f}\n")
+        f.write("\nAverage Ladder Score by Region\n")
+        f.write("-" * 35 + "\n")
 
+    for region, avg in avg_by_region.items():
+        f.write(f"{region}: {avg:.2f}\n")
 
 # === DEFINE THE FULL PIPELINE FUNCTION ===
 
@@ -154,7 +163,7 @@ def run_csv_pipeline(*, raw_dir: Path, processed_dir: Path, logger: Any) -> None
     logger.info("CSV: START")
 
     input_file = raw_dir / "2020_happiness.csv"
-    output_file = processed_dir / "csv_ladder_score_stats.txt"
+    output_file = processed_dir / "tamara_csv_ladder_score_stats.txt"
 
     # E
     scores = extract_csv_scores(file_path=input_file, column_name="Ladder score")
@@ -165,8 +174,37 @@ def run_csv_pipeline(*, raw_dir: Path, processed_dir: Path, logger: Any) -> None
     # V
     verify_stats(stats=stats)
 
-    # L
-    load_stats_report(stats=stats, out_path=output_file)
 
+    region_totals: dict[str, list[float]] = defaultdict(list)
+
+    with input_file.open("r", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+    for row in reader:
+        region = (row.get("Regional indicator") or "").strip()
+        score = (row.get("Ladder score") or "").strip()
+
+        if not region or not score:
+            continue
+
+        try:
+            region_totals[region].append(float(score))
+        except ValueError:
+            continue
+
+    avg_by_region: dict[str, float] = {
+        region: sum(scores) / len(scores)
+        for region, scores in region_totals.items()
+        if scores
+        }
+
+    avg_by_region = dict(
+    sorted(avg_by_region.items(), key=lambda x: x[1], reverse=True)
+)
+    # L
+    load_stats_report(
+        stats=stats,
+        avg_by_region=avg_by_region,
+        out_path=output_file
+    )
     logger.info("CSV: wrote %s", output_file)
     logger.info("CSV: END")
