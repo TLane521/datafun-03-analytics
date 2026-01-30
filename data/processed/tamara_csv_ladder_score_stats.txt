@@ -1,0 +1,19 @@
+CSV Ladder Score Statistics
+Count: 153
+Minimum: 2.57
+Maximum: 7.81
+Mean: 5.47
+Standard Deviation: 1.11
+
+Average Ladder Score by Region
+-----------------------------------
+North America and ANZ: 7.17
+Western Europe: 6.90
+Latin America and Caribbean: 5.98
+Central and Eastern Europe: 5.88
+East Asia: 5.71
+Southeast Asia: 5.38
+Commonwealth of Independent States: 5.36
+Middle East and North Africa: 5.23
+South Asia: 4.48
+Sub-Saharan Africa: 4.38

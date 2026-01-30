@@ -142,8 +142,8 @@ def load_stats_report(
         f.write("\nAverage Ladder Score by Region\n")
         f.write("-" * 35 + "\n")
 
-    for region, avg in avg_by_region.items():
-        f.write(f"{region}: {avg:.2f}\n")
+        for region, avg in avg_by_region.items():
+            f.write(f"{region}: {avg:.2f}\n")
 
 # === DEFINE THE FULL PIPELINE FUNCTION ===
 
